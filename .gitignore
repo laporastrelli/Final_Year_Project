@@ -18,6 +18,7 @@
 *.zsh
 *.mat
 *.m
+__pycache__
 
 # IDE
 .vscode/
