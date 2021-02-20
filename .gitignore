@@ -16,6 +16,8 @@
 *.cfg
 *.sh
 *.zsh
+*.mat
+*.m
 
 # IDE
 .vscode/
@@ -28,3 +30,5 @@
 
 # Checkpoints
 checkpoints/
+
+
