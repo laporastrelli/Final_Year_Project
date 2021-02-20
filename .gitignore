@@ -1,0 +1,30 @@
+# Environments
+*/prj_env_2/
+
+# Python
+*.DS_Store
+*.json
+*.png
+*.jpg
+*.im
+*.seg
+*.npy
+*.h5
+*.hdf5
+*.csv
+*.tfrecords
+*.cfg
+*.sh
+*.zsh
+
+# IDE
+.vscode/
+.ipynb_checkpoints/
+
+# Logging
+**/logs/
+**/logs_old/
+**/logs_old_2/
+
+# Checkpoints
+checkpoints/
