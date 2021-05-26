@@ -39,8 +39,7 @@ from mPE_ultis import integrand, ubble, array_list, permutation
 # n(order of the entropy)
 # L(distance between two adjacent elements in the computation)(generally=1)
 
-def mPE(*argv):
-    
+def mPE(*argv):    
     g=len(argv)
     
     if g==2:

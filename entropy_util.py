@@ -10,6 +10,7 @@ def conditional_entropy(prob_s1s2, prob_s2):
             
     return E_cond
 
+
 def joint_entropy(prob_s1s2):
     E_joint = 0
     for i in range(prob_s1s2.shape[0]):
@@ -18,3 +19,13 @@ def joint_entropy(prob_s1s2):
                 E_joint += prob_s1s2[i,j] * math.log((1/prob_s1s2[i,j]), 2)
             
     return E_joint
+
+
+def AIMF(prob_s1, prob_s2, prob_s1s2):
+    AIMF = 0
+    for i in range(prob_s1s2.shape[0]):
+        for j in range(prob_s1s2.shape[1]):
+            if prob_s1s2[i,j] > 0:
+                AIMF += prob_s1s2[i,j] * math.log((prob_s1s2[i,j]/(prob_s1[i]*prob_s2[j])), 2)
+    
+    return AIMF
