@@ -11,7 +11,7 @@ from scipy.stats import entropy
 from prob_util import *
 from entropy_util import *
 
-modes = ['normal', 'drug', 'vehicle']
+modes = ['drug', 'vehicle']
 root_dir = '/rds/general/user/lr4617/home/4th_Year_Project/CAPTURE_rat_multidimensional/raw_data/'
 
 for mode in modes:
