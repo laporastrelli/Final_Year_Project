@@ -1,33 +1,6 @@
 import numpy as np
-from mPE_fn import mPE_
+from mPE_fn import mPE, mPE_
 from scipy.spatial import distance
-
-
-def get_mPE_matrix(reduced_traj, bins_number, traj_number, orders=[3], random=False):
-    mPE_vector = np.zeros((bins_number, traj_number, len(orders)))
-    traj_length = int((reduced_traj.shape[0]/bins_number)/traj_number)
-    
-    for a, order in enumerate(orders):
-        
-        for i in range(bins_number):
-            idx = 0
-            
-            for j in range(0, traj_length*traj_number, traj_length):
-                
-                if random:
-                    idx_1 = np.random.randint(np.max(reduced_traj.shape) - traj_length)
-                    traj = reduced_traj[idx_1: idx_1 + traj_length]
-                else:
-                    idx_1 = i*traj_number*traj_length 
-                    traj = reduced_traj[idx_1 + j: idx_1 + j + traj_length]
-                    
-                if traj.shape[0]>0:
-                    [HH, _]=mPE_(traj, order)
-                    mPE_vector[i, idx, a] = HH
-                    
-                idx +=1
-                
-    return mPE_vector
 
 
 def probability(*argv):
@@ -80,28 +53,6 @@ def probability(*argv):
             
     return prob_vector
 
-def get_vel_matrix(trajectory, bins_number, traj_number, least_varaince_zdim=8*3):
-    if trajectory.shape[0] < trajectory.shape[1]:
-        trajectory =  trajectory.transpose()
-    dims = 2
-    vel_matrix = np.zeros((bins_number, traj_number))
-    traj_length = int((trajectory.shape[0]/bins_number)/traj_number)
-    for i in range(bins_number):
-        idx = 0
-        idx_1 = 0
-        for j in range(0, traj_length*traj_number, traj_length):
-            idx_1 = i*traj_number*traj_length 
-            traj = trajectory[idx_1 + j: idx_1 + j + traj_length, least_varaince_zdim:least_varaince_zdim+dims]
-            traj = np.asarray(traj)
-            vel_bin = 0
-            last_point = traj[0, :]
-            for point in traj:
-                vel_bin = vel_bin + distance.euclidean(point, last_point)
-                last_point = point
-            vel_matrix[i, idx] = vel_bin/(np.max(traj.shape))
-            idx += 1
-                
-    return vel_matrix
 
 def probability_v2(sequence, centroids):
     '''
@@ -131,6 +82,91 @@ def probability_v2(sequence, centroids):
     prob_vector = prob_vector/(sequence.shape[0])
             
     return prob_vector[0]
+
+
+def get_mPE_matrix(reduced_traj, bins_number, traj_number, orders, random):
+    if random:
+        bins_number = 2
+        mPE_vector = np.zeros((bins_number, traj_number, len(orders)))
+        traj_length = int((reduced_traj.shape[0]/bins_number)/traj_number)
+        print(mPE_vector.shape)
+
+        for i in range(bins_number):
+            idx = 0
+            for j in range(0, traj_length*traj_number, traj_length):
+                print(idx)
+                idx_1 = np.random.randint(np.max(reduced_traj.shape) - traj_length)
+                traj = reduced_traj[idx_1: idx_1 + traj_length]
+                [HH, _]=mPE_(traj, orders[0])
+                mPE_vector[i, idx, 0] = HH
+                idx +=1
+
+    else:
+        mPE_vector = np.zeros((bins_number, traj_number, len(orders)))
+        traj_length = int((reduced_traj.shape[0]/bins_number)/traj_number)
+        
+        for a, order in enumerate(orders):
+            
+            for i in range(bins_number):
+                idx = 0
+                
+                for j in range(0, traj_length*traj_number, traj_length):
+                    idx_1 = i*traj_number*traj_length 
+                    traj = reduced_traj[idx_1 + j: idx_1 + j + traj_length]
+                        
+                    if traj.shape[0]>0:
+                        [HH, _]=mPE_(traj, order)
+                        mPE_vector[i, idx, a] = HH
+                        
+                    idx +=1
+    
+    
+
+                
+    return mPE_vector
+
+
+
+def get_vel_matrix(trajectory, bins_number, traj_number, orders, least_varaince_zdim=0):
+
+    if trajectory.shape[0] < trajectory.shape[1]:
+        trajectory =  trajectory.transpose()
+
+    dims = 2
+
+    mPE_vector = np.zeros((bins_number, traj_number, len(orders)))
+    vel_matrix = np.zeros((bins_number, traj_number, len(orders)))
+    print(bins_number, traj_number)
+    traj_length = int((trajectory.shape[0]/bins_number)/traj_number)
+
+    for a, order in enumerate(orders):
+        for i in range(bins_number):
+
+            idx = 0
+            idx_1 = 0
+
+            for j in range(0, traj_length*traj_number, traj_length):
+
+                idx_1 = i*traj_number*traj_length 
+                traj = trajectory[idx_1 + j: idx_1 + j + traj_length, least_varaince_zdim:least_varaince_zdim+dims]
+                traj = np.asarray(traj)
+                vel_bin = 0
+                last_point = traj[0, :]
+
+                for point in traj:
+                    vel_bin = vel_bin + distance.euclidean(point, last_point)
+                    last_point = point
+
+                if traj.shape[0]>0:
+                    [HH, _]=mPE_(traj, order)
+                    mPE_vector[i, idx] = HH
+                vel_matrix[i, idx, a] = vel_bin/(traj_length/50)
+
+                idx += 1
+                
+    return mPE_vector, vel_matrix
+
+
 
 
 def rolling_mean(x, window, overlapping=True):

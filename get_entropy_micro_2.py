@@ -188,7 +188,6 @@ for which_traj, length in enumerate(lengths):
     random = True
 
     too_low = True
-    
     while too_low == True:
 
         ########## Calculating mPE ##########
