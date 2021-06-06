@@ -209,7 +209,6 @@ def mPE_(*argv):
     
 #    Check for the data to be in the right dimension        
     if datain.shape[0] == 1 or datain.shape[1] == 1:
-        print('check')
         if len(datain[:,0])>len(datain[0,:]):
             datain=datain.transpose()
     else:
