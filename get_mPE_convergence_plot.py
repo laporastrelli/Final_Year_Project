@@ -45,7 +45,9 @@ cnt = 0
 fig, axs = plt.subplots(len(orders), len(n_PCs), figsize=(14, 6))
 
 labels = ['(A)', '(B)', '(C)', '(D)', '(E)', '(F)', '(G)', '(H)']
+sizes = [100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 500000]
 
+to_save = np.zeros((n_trials, len(sizes), len(orders)*len(n_PCs)))
 
 # convergence analysis over 20 trials
 for i, order in enumerate(orders):
@@ -55,7 +57,7 @@ for i, order in enumerate(orders):
         if n_PC >=4:
             sizes = [100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 500000]
         else:
-            sizes = [100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000]
+            sizes = [100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 500000]
     
         H_bound = np.log2(mt.factorial(order)**n_PC)
 
@@ -86,22 +88,33 @@ for i, order in enumerate(orders):
         axs[i, j].plot(sizes, np.mean(sample_H, axis=0))
         axs[i, j].errorbar(sizes, np.mean(sample_H, axis=0), yerr=np.var(sample_H, axis=0), fmt="o", color="r")
         axs[i, j].axhline(y=H_bound, color="black", linestyle="--")
-        axs[i, j].set_ylabel('Order ' + str(order) + ' mPE')
-        axs[i, j].set_xlabel('Sample Size')
+
+        if j == 0:
+            axs[i, j].set_ylabel('Order ' + str(order) + ' mPE')
+        else:
+            axs[i, j].set_ylabel('')
+
         axs[i, j].set_xscale("log")
         axs[i, j].set_xlim([50, 1e06])
         
-        x_min, x_max, y_min, y_max = plt.axis()
+        x_min, x_max, y_min, y_max = axs[i, j].axis()
         if y_max - y_min < 0.3:
             axs[i][j].set_ylim([H_bound - 0.3,  + H_bound + 0.1])
     
         axs[i, j].grid()
-        axs[i, j].text(-0.05, 1.1, labels[cnt], transform=axs[i, j].transAxes, fontsize=16, fontweight='bold', va='top', ha='right') 
+        axs[i, j].text(-0.05, 1.13, labels[cnt], transform=axs[i, j].transAxes, fontsize=16, fontweight='bold', va='top', ha='right') 
         
+        to_save[:, :, cnt] = sample_H
+
         cnt += 1
 
         print(cnt)
 
+name_out_ = 'bias_reduction_data.npy'
+path_out_ = '/rds/general/user/lr4617/home/4th_Year_Project/Final_Report/control_analysis/'
+np.save(path_out_+name_out_, to_save)
+
+fig.text(0.5, 0.02, 'Sample Size', ha='center')
 name_out = 'bias_reduction'
 path_out = '/rds/general/user/lr4617/home/4th_Year_Project/Final_Report/control_analysis/'
 plt.savefig(path_out +  name_out  + ".png")
