@@ -62,7 +62,7 @@ if to_be_removed in drug_trajs_2:
 
 names = normal_trajs + drug_trajs_1 + drug_trajs_2
 
-DMIs = np.zeros((len(lengths), 20))
+DMIs = np.zeros((len(lengths), 20, 3))
 n_PC = 3
 max_length = 348000
 
@@ -107,8 +107,10 @@ for which_traj, length in enumerate(lengths):
         
         # calculate dynamical mutual information
         DMI = HH + mH - JH
+
+        inf = np.array([JH, mH, HH])
         
-        DMIs[which_traj, int(dim/3)] = DMI[0]
+        DMIs[which_traj, int(dim/3), : ] = inf
         
         print(DMI[0])
 
